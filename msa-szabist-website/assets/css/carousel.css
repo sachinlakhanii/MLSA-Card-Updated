@@ -1,0 +1,60 @@
+/* Tune card size, spacing, depth and edge fade here. */
+#directory{
+  --stage-margin:32px;
+  --stage-width:calc(100vw - var(--stage-margin) * 2);
+  --card-height:min(clamp(240px,72vh,700px),max(240px,calc(100svh - 285px)),calc(var(--stage-width) * .805852));
+  --card-width:calc(var(--card-height) * 1.067193676);
+  --stage-padding:20px;
+  --card-gap:24px;
+  --side-card-scale:.82;
+  --edge-fade:6%;
+  width:100%;margin:0 auto;
+}
+.carousel-shell{position:relative;width:100%;overflow-x:clip;overflow-y:visible}
+.carousel-viewport{
+  position:relative;width:var(--stage-width);height:calc(var(--card-height) + var(--stage-padding) * 2);
+  margin-inline:auto;overflow:clip;isolation:isolate;touch-action:pan-y;cursor:grab;
+  mask-image:linear-gradient(to right,transparent,#000 var(--edge-fade),#000 calc(100% - var(--edge-fade)),transparent);
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 var(--edge-fade),#000 calc(100% - var(--edge-fade)),transparent);
+}
+.carousel-slide{
+  --opacity:.7;
+  position:absolute;top:var(--stage-padding);left:50%;width:var(--card-width);height:var(--card-height);aspect-ratio:1080 / 1012;
+  display:block;transform:translateX(calc(-50% + var(--x,0px))) scale(var(--scale,1));
+  opacity:var(--visibility,1);background:var(--bg);
+  user-select:none;-webkit-user-drag:none;outline-offset:4px;border-radius:16px;cursor:inherit;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--line) 75%,transparent),0 10px 20px -12px rgba(0,0,0,.6);
+}
+.carousel-slide.is-active{--opacity:1}
+.carousel-slide.is-hidden{--opacity:0;opacity:0;pointer-events:none}
+/* Fade the artwork over an opaque backing so deeper cards cannot show through it. */
+.carousel-art{display:block;border-radius:16px;overflow:hidden;opacity:var(--opacity)}
+/* Size and fading follow the continuous scroll position; the centre card is largest. */
+.carousel-art{
+  mask-image:linear-gradient(var(--fade-direction,to right),rgba(0,0,0,calc(1 - var(--fade,0) * .85)),rgba(0,0,0,calc(1 - var(--fade,0) * .35)) 25%,#000 55%);
+  -webkit-mask-image:linear-gradient(var(--fade-direction,to right),rgba(0,0,0,calc(1 - var(--fade,0) * .85)),rgba(0,0,0,calc(1 - var(--fade,0) * .35)) 25%,#000 55%);
+}
+.carousel-slide img{display:block;width:100%;height:auto;aspect-ratio:1080 / 1012;pointer-events:none;-webkit-user-drag:none}
+.carousel-viewport.is-dragging{cursor:grabbing}
+.carousel-arrow{position:absolute;top:50%;z-index:3;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:color-mix(in srgb,var(--panel) 90%,transparent);color:var(--text);box-shadow:0 4px 16px rgba(0,0,0,.15);cursor:pointer}
+.carousel-prev{left:8px}.carousel-next{right:8px}
+.carousel-arrow::before{content:"";width:9px;height:9px;border:solid currentColor;border-width:0 2px 2px 0}
+.carousel-prev::before{transform:translateX(2px) rotate(135deg)}.carousel-next::before{transform:translateX(-2px) rotate(-45deg)}
+.carousel-arrow:hover{color:var(--accent);border-color:var(--accent);background:var(--panel)}
+.carousel-arrow:focus-visible,.carousel-slide:focus-visible,.carousel-dot:focus-visible,.carousel-progress:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.carousel-viewport:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+.carousel-details{text-align:center;padding:0 18px 4px;max-width:700px;margin:auto}
+.carousel-name{font-family:var(--font-body);font-size:20px;font-weight:600;line-height:1.2;margin:0}
+.carousel-role{color:var(--accent);font-size:15px;line-height:1.2;margin:3px 0 0}
+.carousel-role:empty{display:none}
+.carousel-counter{color:var(--muted);font-size:12px;line-height:16px;margin:3px 0 0}
+.carousel-pagination{display:flex;align-items:center;justify-content:center;gap:2px;min-height:22px}
+.carousel-dot{display:grid;place-items:center;width:24px;height:22px;padding:0;border:0;background:none;cursor:pointer;border-radius:5px}
+.carousel-dot::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--line)}
+.carousel-dot[aria-current=true]::before{background:var(--accent)}
+.carousel-progress{width:min(200px,60vw);height:14px;margin:4px 0;accent-color:var(--accent);cursor:pointer}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+@media(max-width:640px){
+  #directory{--stage-margin:16px;--card-width:min(84vw,420px);--card-height:calc(var(--card-width) * .937037037);--card-gap:12px;--edge-fade:3%;--stage-padding:22px}
+  .carousel-arrow{width:34px;height:34px}.carousel-prev{left:2px}.carousel-next{right:2px}
+}

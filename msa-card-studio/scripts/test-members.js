@@ -1,0 +1,81 @@
+﻿import assert from 'node:assert/strict';
+import { mkdtemp, rm, mkdir, writeFile, readFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { runLocalHandler } from './api-runner.js';
+import publish from '../api/publish.js';
+import list from '../api/members.js';
+import member from '../api/member.js';
+import remove from '../api/delete.js';
+const dir = await mkdtemp(join(tmpdir(), 'msa-test-'));
+process.env.LOCAL_SITE_DIR = dir; process.env.ADMIN_KEY = 'test'; process.env.SITE_URL = 'http://localhost:8000';
+const png = 'data:image/png;base64,' + Buffer.from([0x89,0x50,0x4e,0x47,1]).toString('base64');
+const alternatePng = 'data:image/png;base64,' + Buffer.from([0x89,0x50,0x4e,0x47,2]).toString('base64');
+const jpeg = 'data:image/jpeg;base64,' + Buffer.from([0xff,0xd8,0xff,1]).toString('base64');
+async function call(handler, method, body = {}, query = {}, key = 'test') {
+  const res = { setHeader() {}, status(code) { this.code = code; return this; }, json(data) { this.data = data; return this; } };
+  const endpoint = new Map([[publish, 'publish'], [list, 'members'], [member, 'member'], [remove, 'delete']]).get(handler);
+  const result = await runLocalHandler(endpoint, { method, headers: { 'x-admin-key': key }, body, query });
+  res.code = result.status; res.data = result.body; return res;
+}
+try {
+  const m = { slug:'test-person', name:'Test Person', theme:'light', hasPhoto:true };
+  const files = { card:png, social:png, photo:jpeg };
+  assert.equal((await call(list, 'GET', {}, {}, 'wrong')).code, 401);
+  assert.equal((await call(member, 'GET', {}, { slug:'unknown' })).code, 404);
+  assert.equal((await call(remove, 'POST', { slug:'unknown' })).code, 404);
+  assert.equal((await call(publish, 'POST', { mode:'update', member:m, files })).code, 404);
+  assert.equal((await call(publish, 'POST', { mode:'create', member:m, files })).code, 200);
+  assert.equal((await call(publish, 'POST', { mode:'create', member:m, files })).code, 409);
+  const first = (await call(member, 'GET', {}, { slug:m.slug })).data;
+  assert.equal(first.theme, 'light'); assert.equal(first.photo, jpeg);
+  assert.equal(first.github, '');
+  assert.equal((await call(list, 'GET')).data.publishVersion, 'profile-themes-qr-v3');
+  assert.equal((await call(publish, 'POST', { mode:'update', member:m, files, publishVersion:'obsolete' })).code, 426);
+  assert.equal((await call(publish, 'POST', { mode:'update', member:m, files })).code, 200); // Legacy records remain editable.
+  const html = await readFile(join(dir,'profile',m.slug,'index.html'),'utf8'); assert.match(html, /Test Person/);
+  assert.equal((await call(publish, 'POST', { mode:'update', member:{ ...m, github: '-invalid' }, files })).code, 400);
+  await writeFile(join(dir,'assets','members',m.slug,'card-back-wide-light.svg'),'<svg/>'); // An obsolete wide back from older versions.
+  assert.equal((await call(publish, 'POST', { mode:'update', member:{ ...m, name:'Updated', hasPhoto:false, github:'@octocat' }, files:{ ...files, cardAlternate: alternatePng } })).code, 200);
+  const updated = (await call(member, 'GET', {}, { slug:m.slug })).data;
+  assert.equal(updated.id, first.id); assert.equal(updated.issued, first.issued); assert.ok(updated.updated); assert.equal(updated.photo, null);
+  assert.equal(updated.github, 'https://github.com/octocat');
+  assert.equal(updated.cardThemes, true);
+  assert.equal(updated.cardBack, true);
+  await assert.rejects(readFile(join(dir,'assets','members',m.slug,'card-back-wide-light.svg')));
+  assert.ok((await readFile(join(dir,'assets','members',m.slug,'card-back.svg'),'utf8')).includes('height="1700"'));
+  const back = await readFile(join(dir,'assets','members',m.slug,'card-back-portrait-light.svg'),'utf8');
+  assert.ok(back.includes('Scan to verify Updated'));
+  assert.ok(back.includes('height="1700"'));
+  assert.ok(back.includes('shape-rendering="crispEdges"'));
+  assert.ok(!(await readFile(join(dir,'profile',m.slug,'index.html'),'utf8')).includes('card-back-wide-'));
+  assert.notEqual(updated.assetVersion, first.assetVersion);
+  const updatedHtml = await readFile(join(dir,'profile',m.slug,'index.html'),'utf8');
+  assert.match(updatedHtml, /body class="profile-page"/);
+  assert.match(updatedHtml, /class="avatar-shell"/);
+  assert.ok(updatedHtml.includes('/assets/js/theme.js'));
+  assert.match(updatedHtml, new RegExp('card-dark\\.png\\?v=' + updated.assetVersion));
+  assert.ok(!updatedHtml.includes('<dt>Member ID</dt>'));
+  assert.equal((await readFile(join(dir,'assets','members',m.slug,'card-light.png'))).at(-1), 1);
+  assert.equal((await readFile(join(dir,'assets','members',m.slug,'card-dark.png'))).at(-1), 2);
+  assert.match(await readFile(join(dir,'profile',m.slug,'index.html'),'utf8'), /View GitHub/);
+  assert.match(await readFile(join(dir,'profile',m.slug,'index.html'),'utf8'), /card-dark\.png/);
+  assert.equal((await call(publish, 'POST', { member:m, files, padding:'x'.repeat(4_400_000) })).code, 413);
+  assert.equal((await call(publish, 'POST', { mode:'update', member:m, files })).code, 409);
+  assert.equal((await call(member, 'GET', {}, { slug:m.slug })).data.cardThemes, true);
+  assert.equal(await readFile(join(dir,'profile',m.slug,'index.html'),'utf8'), updatedHtml);
+  assert.equal((await readFile(join(dir,'assets','members',m.slug,'card-dark.png'))).at(-1), 2);
+  // Even a legacy server that dropped the flag must not destroy existing variants.
+  const indexFile = join(dir, 'data/members.json');
+  const savedIndex = await readFile(indexFile, 'utf8');
+  const legacyIndex = JSON.parse(savedIndex);
+  delete legacyIndex.members[0].cardThemes;
+  await writeFile(indexFile, JSON.stringify(legacyIndex));
+  assert.equal((await call(publish, 'POST', { mode:'update', member:m, files })).code, 409);
+  await writeFile(indexFile, savedIndex);
+  await mkdir(join(dir,'assets','members',m.slug,'extra'), {recursive:true}); await writeFile(join(dir,'assets','members',m.slug,'extra','test.txt'),'x');
+  assert.equal((await call(remove, 'POST', {slug:m.slug})).code, 200);
+  assert.deepEqual((await call(list, 'GET')).data.members, []);
+  await assert.rejects(readFile(join(dir,'assets','members',m.slug,'extra','test.txt')));
+  console.log('Member API create/update/delete and error checks passed.');
+} finally { await rm(dir, { recursive:true, force:true }); }

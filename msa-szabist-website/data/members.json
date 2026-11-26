@@ -1,0 +1,50 @@
+{
+  "members": [
+    {
+      "slug": "shoaib-hassan",
+      "name": "Shoaib Hassan",
+      "team": "MLSA SZABIST",
+      "role": "President",
+      "linkedin": "https://www.linkedin.com/in/shoaibhassan10",
+      "github": "",
+      "theme": "light",
+      "cardThemes": true,
+      "id": "MSA-RKPVW9",
+      "issued": "2026-11-20T19:13:55.111Z",
+      "photo": true,
+      "assetVersion": "05c26c7b7f181065",
+      "cardBack": true
+    },
+    {
+      "slug": "mushaf-ali",
+      "name": "Mushaf Ali",
+      "team": "MLSA SZABIST",
+      "role": "Head Of Opeartions",
+      "linkedin": "https://www.linkedin.com/in/mushafmir",
+      "github": "https://github.com/mushafmirdev",
+      "theme": "dark",
+      "cardThemes": true,
+      "id": "MSA-6A6KDF",
+      "issued": "2026-11-20T19:11:56.390Z",
+      "photo": true,
+      "assetVersion": "b924512bedcba277",
+      "cardBack": true
+    },
+    {
+      "slug": "sachinlakhanii",
+      "name": "Sachin Lakhani",
+      "team": "Events & Operation",
+      "role": "Lead",
+      "linkedin": "https://www.linkedin.com/in/sachinlakhanii",
+      "github": "https://github.com/sachinlakhanii",
+      "theme": "light",
+      "cardThemes": true,
+      "id": "MSA-B5ZT6E",
+      "issued": "2026-11-20T14:32:55.354Z",
+      "photo": true,
+      "assetVersion": "691fe0805207f0b0",
+      "updated": "2026-11-21T04:55:19.489Z",
+      "cardBack": true
+    }
+  ]
+}

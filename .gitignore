@@ -1,0 +1,17 @@
+# Credentials and local settings (at every project depth).
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Dependencies, deployment state and local artifacts.
+node_modules/
+.vercel/
+.DS_Store
+Thumbs.db
+_design-wide/
+_design-portrait/
+_design-source/
+design-review/
+*.log

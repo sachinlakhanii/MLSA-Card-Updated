@@ -1,0 +1,21 @@
+/* ===== Social preview card (1200x630), rendered off-screen and published with the profile ===== */
+.sc .strip{display:flex}.sc .strip i{flex:1}.sc .strip i:nth-child(1){background:#F25022}.sc .strip i:nth-child(2){background:#7FBA00}.sc .strip i:nth-child(3){background:#00A4EF}.sc .strip i:nth-child(4){background:#FFB900}
+.sc{position:relative;width:1200px;height:630px;display:flex;overflow:hidden;background:#0A0E17;color:#F3F6FB;font-family:'Inter',sans-serif}
+.sc-main{flex:1;padding:56px 24px 56px 64px;display:flex;flex-direction:column;justify-content:space-between}
+.sc-head{display:flex;align-items:center;gap:20px}
+.sc-logo{width:88px;height:96px;flex:none}
+.sc-logo img{display:block;width:100%;height:100%;object-fit:contain}
+.sc-top{font-size:15px;font-weight:600;letter-spacing:4px;color:#4DA3FF}
+.sc-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:30px}
+.sc-eyebrow{font-size:18px;font-weight:600;letter-spacing:5px;color:#4DA3FF}
+.sc-name{margin-top:14px;font-family:'Space Grotesk',sans-serif;font-weight:700;line-height:1.05;letter-spacing:-1.5px}
+.sc-team{margin-top:12px;font-size:30px;color:#9AA8BF}
+.sc-role{display:inline-block;margin-top:18px;padding:10px 22px;border-radius:999px;background:#12233F;color:#9CCBFF;font-size:24px;font-weight:600}
+.sc-verified{display:flex;align-items:center;gap:14px;font-size:24px;font-weight:600}
+.sc-verified::before{content:"";width:14px;height:14px;border-radius:50%;background:#7FBA00}
+.sc-photo-wrap{width:400px;padding:56px 64px 56px 0;display:flex}
+.sc-photo{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:36px;background:#121A2B;border:2px solid #1F2B44;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:110px;color:#4DA3FF}
+.sc-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 25%}
+.sc .strip{position:absolute;left:0;right:0;bottom:0}
+.sc .strip i{height:10px}
+

@@ -1,0 +1,3 @@
+/* Supplied transparent badge: keep the whole image at its natural proportions. */
+.brand-lockup{display:block;position:relative;width:var(--logo-width,48px);height:auto;aspect-ratio:4096 / 3571;flex:none;background:transparent}
+.brand-lockup>img{display:block;width:100%;height:100%;max-width:100%;object-fit:contain;border-radius:0}
