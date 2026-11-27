@@ -1,7 +1,9 @@
 /* Artwork only: shared by preview, exports and server-generated verification backs. */
 import { palettes, icons } from './card-palettes.js';
 import { artAssets } from './card-art-assets.js';
-import { wideArt } from './wide-art.js';
+import { eighthArtwork } from './eighth-artwork.js';
+import { wideLayoutSvg } from './wide-layout.js';
+import { szabistBackLogo } from './partner-logo.js';
 
 export const PORTRAIT_SCALE = 1080 / 638;
 export const PORTRAIT_GAP = 1700 / PORTRAIT_SCALE - 982;
@@ -16,7 +18,7 @@ export function teamIndex(value) {
 export function paletteFor(team, theme = 'dark') {
   const index = teamIndex(team), p = palettes[index];
   const dark = ['#064a80','#00675e','#58208d','#930b4b','#49309b','#78560b','#a30d17','#185e26'][index];
-  return {...p,index,text:theme==='light'?'#122137':'#f8f8fc',muted:theme==='light'?'#43566d':'#d7def0',ink:theme==='light'?dark:p.accent,base:theme==='light'?'#f8fafc':['#031736','#002b2e','#200a3c','#360018','#100d36','#031a36','#090909','#002d10'][index],pale:['#e4f3ff','#e1f7f2','#f0e7fb','#fce7f0','#eee8fc','#fbf2dc','#fbe8e9','#edf5df'][index]};
+  return {...p,index,text:theme==='light'?'#122137':index===7?'#f6e4c8':'#f8f8fc',muted:theme==='light'?'#43566d':index===7?'#edd3b1':'#d7def0',ink:theme==='light'?dark:p.accent,base:theme==='light'?'#f8fafc':['#031736','#002b2e','#200a3c','#360018','#100d36','#031a36','#090909','#500012'][index],pale:['#e4f3ff','#e1f7f2','#f0e7fb','#fce7f0','#eee8fc','#fbf2dc','#fbe8e9','#f6e4c8'][index]};
 }
 export function iconSvg(name, color = 'currentColor') {
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(icons[name]||icons.star).replace(/#fff/g,color)+'</svg>';
@@ -26,25 +28,19 @@ export function buildingArtwork(ink='#ffffff') {
   return '<svg xmlns="http://www.w3.org/2000/svg" width="335" height="133" viewBox="0 0 335 133"><defs><mask id="lines">'+image(artAssets.building,0,0,335,133)+'</mask></defs><rect width="335" height="133" fill="'+ink+'" mask="url(#lines)"/></svg>';
 }
 export function wideDecoration(team, theme) {
-  const p = paletteFor(team,theme);
-  const paper=theme==='light'?'<defs><linearGradient id="wide-paper" x2="1" y2="1"><stop stop-color="#ffffff"/><stop offset="1" stop-color="'+p.pale+'"/></linearGradient></defs><rect width="1080" height="1012" fill="url(#wide-paper)"/>':'';
-  return wideArt.replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ').replace('viewBox="0 0 1080 1080" width="1080" height="1080"','viewBox="0 0 1080 1012" width="1080" height="1012"')
-    .replace('<defs>',paper+'<defs>')
-    .replace(/id="(gx|glow|gx0|gx1|gx2|frameArt)"/g,'id="wide-$1"').replace(/url\(#(gx|glow)\)/g,'url(#wide-$1)')
-    .replace(/data-s="([al])"/g,(_,v)=>'stroke="'+(v==='a'?p.ink:(theme==='light'?p.accent:p.light))+'"')
-    .replace(/data-f="([al])"/g,(_,v)=>'fill="'+(v==='a'?p.ink:(theme==='light'?p.accent:p.light))+'"')
-    .replace(/<stop id="wide-gx([012])"/g,(_,n)=>'<stop stop-color="'+(n==='1'?p.ink:(theme==='light'?p.accent:p.light))+'" id="wide-gx'+n+'"')
-    .replace(/<path d="M-30 (905|952)/g,'<path transform="translate(0 -68)" d="M-30 $1')
-    .replace('id="wide-frameArt"','id="wide-frameArt" transform="translate(0 -16)"');
+  return wideLayoutSvg(paletteFor(team,'dark'));
 }
 export function portraitGeometry(team) {
   const g = artAssets.geometry[teamIndex(team)], s=PORTRAIT_SCALE, gap=PORTRAIT_GAP;
+  if(teamIndex(team)===7) return {photo:[164*s,255*s,308*s,314*s],name:[319*s,630*s],role:[319*s,760*s],qr:[540,759]};
   return {photo:[g.photo[0]*s,(g.photo[1]+gap)*s,(g.photo[2]-g.photo[0])*s,(g.photo[3]-g.photo[1])*s],name:[g.nameC[0]*s,(g.nameC[1]+gap)*s],role:[g.roleC[0]*s,(g.roleC[1]+gap)*s],qr:[(g.qr[0]+g.qr[2])/2*s,((g.qr[1]+g.qr[3])/2+gap)*s]};
 }
 function sourceArtwork(uri,side,index) {
   // Insert height only in the plain gradient between header and photo; content stays proportional.
   const gap=PORTRAIT_GAP, cut=side==='back'?(index===7?340:245):210;
-  return '<defs><clipPath id="top"><rect width="638" height="'+cut+'"/></clipPath><clipPath id="bottom"><rect y="'+cut+'" width="638" height="'+(982-cut)+'"/></clipPath></defs>'+image(uri,0,0,638,982,'clip-path="url(#top)"')+'<svg y="'+cut+'" width="638" height="'+gap+'" viewBox="0 '+(cut-1)+' 638 1" preserveAspectRatio="none">'+image(uri,0,0,638,982)+'</svg><g transform="translate(0 '+gap+')">'+image(uri,0,0,638,982,'clip-path="url(#bottom)"')+'</g>';
+  // Restore the plain background over the old baked logo, sampling a clean strip above it.
+  const partner=side==='back'?'<svg x="72" y="758" width="220" height="94" viewBox="72 754 220 1" preserveAspectRatio="none">'+image(uri,0,0,638,982)+'</svg>'+szabistBackLogo(74,765,216,84):'';
+  return '<defs><clipPath id="top"><rect width="638" height="'+cut+'"/></clipPath><clipPath id="bottom"><rect y="'+cut+'" width="638" height="'+(982-cut)+'"/></clipPath></defs>'+image(uri,0,0,638,982,'clip-path="url(#top)"')+'<svg y="'+cut+'" width="638" height="'+gap+'" viewBox="0 '+(cut-1)+' 638 1" preserveAspectRatio="none">'+image(uri,0,0,638,982)+'</svg><g transform="translate(0 '+gap+')">'+image(uri,0,0,638,982,'clip-path="url(#bottom)"')+partner+'</g>';
 }
 function livePill(p, y) {
   // Fully cover the original baked pill, including its label. Reuse supplied SVG team icons.
@@ -63,5 +59,6 @@ function lightArtwork(p,side) {
 }
 export function portraitArtwork(team, theme='dark', side='front') {
   const p=paletteFor(team,theme), h=1700/PORTRAIT_SCALE;
+  if(p.index===7) return eighthArtwork({shield:artAssets.shield,building:artAssets.building,partners:artAssets.back[0],back:side==='back',height:h});
   return '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1700" viewBox="0 0 638 '+h+'"><defs><linearGradient id="pill"><stop stop-color="'+(theme==='light'?p.pale:p.pillA)+'"/><stop offset="1" stop-color="'+(theme==='light'?'#ffffff':p.pillB)+'"/></linearGradient></defs>'+(theme==='light'?lightArtwork(p,side):sourceArtwork(artAssets[side][p.index],side,p.index))+(side==='front'?livePill(p,705+PORTRAIT_GAP):'')+'</svg>';
 }

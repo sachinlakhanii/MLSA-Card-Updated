@@ -13,7 +13,7 @@ for (const layout of ['badge']) for (const theme of ['dark','light']) {
   const svg = cardBackSvg({name:'<script>alert("test")</script>',url,layout,theme});
   assert.ok(svg.includes(layout === 'wide' ? 'height="1012"' : 'height="1700"'));
   assert.ok(!svg.includes('<script>')); assert.ok(svg.includes('&lt;script&gt;'));
-  assert.ok(svg.includes('>@test-person</text>'));
+  assert.doesNotMatch(svg, /<text\b[^>]*>[^<]*@/); // Profile handles are no longer printed on the back.
   assert.ok(svg.includes('fill="#FFFFFF"')); // QR panel is white in both themes.
 }
 const previous = process.env.SITE_URL; process.env.SITE_URL = 'https://members.example.org';

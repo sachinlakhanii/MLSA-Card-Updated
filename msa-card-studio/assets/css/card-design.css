@@ -5,31 +5,38 @@
 .kcard.light{--k-mu:#43566d;--k-bg:#f8fafc}
 .card-wide{height:1012px}.card-badge{height:1700px;display:none;border-radius:28px}
 .design-art{position:absolute;inset:0;width:1080px;height:100%;display:block;pointer-events:none}
-.card-wide .design-header{position:absolute;left:98px;top:80px;display:flex;align-items:center;gap:24px}
+.card-wide .design-header{position:absolute;left:98px;top:88px;display:flex;align-items:center;gap:18px}
 .design-header>img{width:148px;height:auto;flex:none}.design-divider{width:4px;height:144px;border-radius:2px;background:var(--design-text)}
-.design-title{font-size:34px;font-weight:500;line-height:1.1}.design-campus{margin-top:12px;font-size:35px;font-weight:700;line-height:1.1;color:var(--design-ink)}
+.design-title{font-size:34px;font-weight:600;line-height:1.1}.design-campus{margin-top:12px;font-size:35px;font-weight:700;line-height:1.1;color:var(--design-heading,var(--design-ink))}
 .kcard .eyebrow{position:absolute;font-size:26px;line-height:1.1;font-weight:700;letter-spacing:5px;color:var(--design-text)}
-.card-wide .eyebrow{left:112px;top:300px}
+.card-wide .eyebrow{left:112px;top:310px}
 .kcard .name,.kcard .role,.kcard .team{margin:0;font-family:Montserrat,Arial,sans-serif}
-.card-wide .name{position:absolute;left:110px;top:357px;width:410px;max-height:173px;line-height:1.08;font-weight:700;overflow-wrap:anywhere}
-.card-wide .role{position:absolute;left:113px;top:542px;width:430px;line-height:1.2;font-weight:600;color:var(--design-muted);overflow-wrap:anywhere}
-.team-pill{position:absolute;left:101px;top:638px;width:439px;height:68px;padding:0 21px;display:flex;align-items:center;gap:14px;border-radius:34px}
-.team-pill-art{position:absolute;inset:0;width:439px;height:68px;pointer-events:none}.team-pill>span{position:relative}
+.card-wide .name{position:absolute;left:110px;top:384px;width:410px;max-height:160px;line-height:1.05;font-weight:700;overflow-wrap:anywhere}
+.card-wide .role{position:absolute;left:113px;top:553px;width:430px;line-height:1.2;font-weight:600;color:var(--design-muted);overflow-wrap:anywhere}
+.team-pill{position:absolute;left:106px;top:624px;width:var(--wide-pill-width,370px);height:64px;padding:0 21px;display:flex;align-items:center;gap:14px;border-radius:32px}
+.team-pill-art{position:absolute;inset:0;width:100%;height:64px;pointer-events:none}.team-pill>span{position:relative}
 .team-icon{display:flex;align-items:center;gap:8px;height:42px;flex:none}.team-icon svg{display:block;width:42px;height:42px;flex:none}.team-icon.with-divider{padding-right:12px;border-right:2px solid currentColor}.team{font-weight:700}.team-pill .team{max-width:335px;white-space:nowrap;line-height:1.1}
 .photo-slot{position:absolute;display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden;background:#e3e6f2;color:var(--design-ink)}
 .photo-slot>svg{width:130px;height:130px;flex:none}.ph-label{font-size:17px;font-weight:600;letter-spacing:4px;margin-top:16px;color:#52647d}
-.card-wide .photo-slot{left:582px;top:312px;width:372px;height:390px;border-radius:58px}
+.card-wide .photo-slot{left:588px;top:318px;width:372px;height:390px;border-radius:59px;background:transparent}
+.card-wide .photo-slot>svg,.card-wide .ph-label{display:none}
 .ph-img{position:absolute;inset:0;width:100%;height:100%;display:none;object-fit:cover;object-position:50% 50%}
 .clr{display:none;position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:2;background:#061c36;color:#fff;border:2px solid #ffffff80;border-radius:24px;font:600 16px Montserrat,Arial,sans-serif;padding:10px 18px;white-space:nowrap;cursor:pointer}
-.w-footer{position:absolute;left:72px;top:800px;width:480px;border-top:3px solid var(--design-text);padding-top:22px;display:flex;flex-direction:column;gap:14px}
+.w-footer{position:absolute;left:72px;top:776px;width:520px;border-top:3px solid var(--design-text);padding-top:22px;display:flex;flex-direction:column;gap:12px}
 .w-footer .org{font-size:25px;font-weight:500;white-space:nowrap}.social-handles{display:flex;align-items:center;gap:14px;white-space:nowrap;min-width:0;max-width:100%;font-size:var(--handle-size,20px);line-height:1.4;color:var(--design-muted)}
 .social-handle{display:inline-flex;align-items:center;gap:9px;min-width:0;flex:0 1 auto;max-width:100%}.social-handle svg{width:22px;height:22px;flex:none;fill:currentColor}.social-username{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.social-divider{width:1px;height:22px;background:var(--design-muted);flex:none}
 .social-handles[hidden],.social-handle[hidden],.social-divider[hidden]{display:none}
-.design-building{position:absolute;left:594px;top:790px;width:365px;height:auto}
+.design-building{position:absolute;left:600px;top:756px;width:375px;height:auto}
 .card-badge .photo-slot{border-radius:80px;background:transparent}.card-badge .photo-slot>svg,.card-badge .ph-label{display:none}
 .card-badge.light .photo-slot>svg{display:block}.card-badge.light .ph-label{display:block}
 .card-badge .eyebrow{left:0;right:0;top:360px;text-align:center;font-size:19px;letter-spacing:5px;color:var(--design-ink)}
 .card-badge .name,.card-badge .role{position:absolute;transform:translate(-50%,-50%);text-align:center;white-space:nowrap;line-height:1.15}
 .card-badge .name{width:820px;font-weight:700;color:#122137}.card-badge .role{width:760px;font-weight:600;color:var(--design-text)}
+.card-badge.is-eighth .name{color:#500012}.card-badge.is-eighth .team{left:50%;top:calc(710px * 1.6927899687)}
+.card-badge.is-eighth .eyebrow{display:none}.card-badge.is-eighth .photo-slot{border-radius:88px}
+/* All Wide cards share geometry; the eighth keeps its cream/gold palette. */
+.card-wide.is-eighth .name,.card-wide.is-eighth .design-title,.card-wide.is-eighth .eyebrow,.card-wide.is-eighth .org{color:#fff8ef}
+.card-wide.is-eighth .team-pill{color:#500012}
+.card-wide.is-eighth .team-icon{height:56px}.card-wide.is-eighth .team-icon svg{width:48px;height:56px}
 .card-badge .team{position:absolute;top:calc((735px + 22.259259px) * 1.6927899687);left:calc(341px * 1.6927899687);transform:translate(-50%,-50%);width:470px;text-align:center;white-space:nowrap;line-height:1.1;color:var(--design-text)}
 .card-back .back-image{display:block;width:1080px;height:1700px;object-fit:contain}.card-back .back-image[hidden],.card-back .back-message[hidden]{display:none}.card-back .back-message{align-self:center;width:100%;padding:80px;text-align:center;font-size:38px;line-height:1.6;color:var(--k-mu)}

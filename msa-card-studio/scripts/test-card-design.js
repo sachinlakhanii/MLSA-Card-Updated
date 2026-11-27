@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { teamIndex, portraitGeometry, PORTRAIT_SCALE, PORTRAIT_GAP, portraitArtwork } from '../assets/js/card-artwork.js';
 import { cardBackSvg, profileUrl } from '../assets/js/verification.js';
 
@@ -6,6 +7,7 @@ import { cardBackSvg, profileUrl } from '../assets/js/verification.js';
 for (const [name,index] of [['Technical',0],['Technical Team',0],[' TECH ',0],['Outreach',1],['Events & Operation',2],['Events and Operations',2],['Events & Ops Team',2],['Marketing',3],['Social Media Team',4],['Sponsorship',5],['Design and Content',6],['MLSA SZABIST Islamabad',7],['Unlisted custom team',7],['',7]]) assert.equal(teamIndex(name),index,name);
 assert.equal(Math.round((982+PORTRAIT_GAP)*PORTRAIT_SCALE),1700);
 const url=profileUrl('https://members.example.org','example-person');
+const partnerLogo='data:image/png;base64,'+readFileSync(new URL('../assets/img/card-design/szabist-horizontal.png',import.meta.url)).toString('base64');
 for(const team of ['Technical','Outreach','Events & Operations','Marketing','Social Media','Sponsorship','Design & Content','MLSA SZABIST']) {
   assert.equal(cardBackSvg({name:'Example',team,url,theme:'light'}),cardBackSvg({name:'Example',team,url,theme:'dark'}),'Legacy light requests must use the dark verification artwork.');
   const {photo,qr}=portraitGeometry(team);
@@ -17,8 +19,10 @@ for(const team of ['Technical','Outreach','Events & Operations','Marketing','Soc
     assert.ok(front.includes('width="1080" height="1700"'));
     const back=cardBackSvg({name:'<unsafe>',team,url,theme});
     assert.ok(back.includes('&lt;unsafe&gt;'));
-    assert.ok(back.includes('>@example-person</text>'));
+    assert.doesNotMatch(back, /<text\b[^>]*>[^<]*@/);
+    assert.doesNotMatch(back, /<text\b[^>]*>[^<]*&lt;unsafe&gt;/); // Names stay in accessibility metadata only.
     assert.ok(back.includes('fill="#FFFFFF"'));
+    assert.ok(back.includes(partnerLogo),'Each standalone back must embed the supplied horizontal SZABIST logo.');
     // Published backs must render independently of private studio asset URLs.
     assert.ok(!/href="(?:https?:|\/assets\/)/.test(back));
   }
